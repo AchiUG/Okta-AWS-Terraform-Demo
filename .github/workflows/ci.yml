@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    env:
+      OKTA_ORG_NAME: ${{ secrets.OKTA_ORG_NAME }}
+      OKTA_API_TOKEN: ${{ secrets.OKTA_API_TOKEN }}
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Validate Okta Terraform
+        working-directory: ./okta
+        run: |
+          terraform init -input=false
+          terraform fmt -check
+          terraform validate
+          terraform plan -input=false \
+            -var "okta_org_name=$OKTA_ORG_NAME" \
+            -var "okta_api_token=$OKTA_API_TOKEN"
+
+      - name: Validate AWS Terraform
+        working-directory: ./aws
+        run: |
+          terraform init -input=false
+          terraform fmt -check
+          terraform validate
+          terraform plan -input=false \
+            -var "aws_region=$AWS_REGION"
+
+      - name: Lint K8s manifests
+        run: |
+          pip install kube-linter
+          kube-linter lint k8s || true
