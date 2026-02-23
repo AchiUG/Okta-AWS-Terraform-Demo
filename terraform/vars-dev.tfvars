@@ -1,5 +1,5 @@
-region            = "your-aws-region"
-okta_org_name     = "your-org-name"
+region            = "us-east-1"
+okta_org_name     = "trial-8388972"
 okta_base_url     = "oktapreview.com"
 okta_scopes       = [
   "okta.groups.manage"
