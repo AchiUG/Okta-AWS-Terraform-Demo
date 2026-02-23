@@ -25,7 +25,7 @@ jobs:
       - name: Apply Okta config
         working-directory: ./okta
         run: |
-          terraform init -input=false
+          terraform init -input=false -backend-config=backend-prod.conf
           terraform apply -input=false -auto-approve \
             -var "okta_org_name=$OKTA_ORG_NAME" \
             -var "okta_api_token=$OKTA_API_TOKEN"

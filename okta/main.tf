@@ -5,6 +5,9 @@ terraform {
       version = "~> 4.0"
     }
   }
+  # Backend configuration variables are supplied via backend-*.conf files
+  backend "s3" {
+  }
 }
 
 provider "okta" {
