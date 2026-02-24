@@ -4,7 +4,7 @@ okta_base_url     = "oktapreview.com"
 okta_scopes       = [
   "okta.groups.manage"
 ]
-okta_client_id    = "your-client-id"
+okta_client_id    = "0oa10d0dhwmgJJPPi698"
 okta_private_key_id = "your-private-key-kid"
 okta_secret_id    = "your-secrets-manager-id"
 
