@@ -25,7 +25,7 @@ jobs:
       - name: Validate Okta Terraform
         working-directory: ./okta
         run: |
-          terraform init -input=false -backend-config=backend-prod.conf
+          terraform init -input=false -backend-config=backend-prod.conf -backend-config="region=us-east-1"
           terraform fmt -check
           terraform validate
           terraform plan -input=false \

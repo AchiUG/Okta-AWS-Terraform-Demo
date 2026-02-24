@@ -1,4 +1,4 @@
-region            = "your-aws-region"
+region            = "us-east-1"
 okta_org_name     = "your-org-name"
 okta_base_url     = "okta.com"
 okta_scopes       = [
