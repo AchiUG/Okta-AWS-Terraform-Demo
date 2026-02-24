@@ -33,7 +33,7 @@ jobs:
       - name: Apply AWS infra
         working-directory: ./aws
         run: |
-          terraform init -input=false
+          terraform init -input=false -backend-config=backend-prod.conf -backend-config="region=us-east-1"
           terraform apply -input=false -auto-approve \
             -var "aws_region=$AWS_REGION"
 
