@@ -5,6 +5,7 @@ metadata:
   namespace: demo
 spec:
   replicas: 2
+  progressDeadlineSeconds: 600
   selector:
     matchLabels:
       app: demo-app
@@ -15,6 +16,7 @@ spec:
     spec:
       containers:
         - name: demo-app
-          image: nginx:stable
+          # Use ECR Public to avoid Docker Hub rate limits in CI
+          image: public.ecr.aws/docker/library/nginx:alpine
           ports:
             - containerPort: 80
