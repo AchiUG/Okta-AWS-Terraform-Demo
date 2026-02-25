@@ -45,6 +45,7 @@ jobs:
             -var "aws_region=$AWS_REGION"
 
       - name: Lint K8s manifests
-        run: |
-          pip install kube-linter
-          kube-linter lint k8s || true
+        uses: stackrox/kube-linter-action@v1.0.4
+        with:
+          directory: k8s
+        continue-on-error: true
