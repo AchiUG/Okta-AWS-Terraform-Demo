@@ -58,7 +58,7 @@ jobs:
 
       - name: Wait for rollout
         run: |
-          kubectl rollout status deployment/demo-app -n demo --timeout=5m
+          kubectl rollout status deployment/demo-app -n demo --timeout=8m
 
       - name: Show pod status (on rollout failure)
         if: failure()
