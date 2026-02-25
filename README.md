@@ -80,6 +80,7 @@ Create a pull request from develop to main within the repository to trigger the 
 ### Merge to main
 
 Merge the pull request to main within the repository to trigger the GitHub Actions workflow `Prod Build`, which uses Terraform to build against the Okta production environment. Observe the workflow within GitHub Actions.
+> a feature branch was created for testing the CI pipeline on github actions. A pr request is maade to merge the feature branch to main branch in order to trigger the CI workflow.
 
 
 ## Links
