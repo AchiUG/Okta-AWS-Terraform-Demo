@@ -55,6 +55,8 @@ git checkout -b develop
 
 Update the `backend-*.conf` and `tfvars` files and replace variables with values from your Okta account, AWS account, and GitHub.
 
+**Secrets and variables:** Do not commit real secrets (API tokens, private keys, secret IDs). Use the `*.tfvars.example` files as templates; copy to `vars-*.tfvars` locally and keep them out of version control, or pass sensitive values via GitHub Secrets and `-var` in workflows. For AWS, prefer [OIDC with GitHub Actions](docs/OIDC_SETUP.md) over long-lived access keys.
+
 ### Configure resources and variables
 
 Uncomment the pre-defined resources and variables within the `terraform/modules/directory/variables.tf`, `terraform/modules/directory/okta_groups.tf`, `terraform/variables.tf`, `terraform/main.tf`, and `tfvars` files to prepare for creating a group within the Okta environments.

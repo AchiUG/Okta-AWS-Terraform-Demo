@@ -1,0 +1,9 @@
+# Copy to vars-dev.tfvars and set values. Do not commit real tfvars with secrets.
+
+region            = "us-east-1"
+okta_org_name     = "your-dev-org-subdomain"
+okta_base_url     = "oktapreview.com"
+okta_scopes       = ["okta.groups.manage"]
+okta_client_id    = "your-client-id"
+okta_private_key_id = "your-private-key-kid"
+okta_secret_id    = "your-secrets-manager-secret-id"

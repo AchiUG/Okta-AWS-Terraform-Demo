@@ -11,34 +11,42 @@ jobs:
     env:
       TF_LOG: INFO
       TF_INPUT: false
+      OKTA_ORG_NAME: ${{ secrets.OKTA_ORG_NAME }}
+      OKTA_API_TOKEN: ${{ secrets.OKTA_API_TOKEN }}
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     defaults:
       run:
         shell: bash
     steps:
-    # Checkout the GitHub Actions runner
-    - name: Checkout
-      uses: actions/checkout@v4
-   # Get AWS Credentials via OIDC
-    - name: Configure aws credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
-  # Install Terraform CLI
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v3
-      with:
-        terraform_version: 1.8
- # Run Terraform commands
-    - name: Terraform Init
-      id: init
-      env:
-        TF_VAR_AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
-      run: terraform -chdir="terraform" init -backend-config=backend-dev.conf
-    - name: Terraform Plan
-      id: plan
-      run: terraform -chdir="terraform" plan -var-file=vars-dev.tfvars
-    - name: Terraform Apply
-      id: apply
-      run: terraform -chdir="terraform" apply -auto-approve -var-file=vars-dev.tfvars
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8
+
+      # Same roots as prod (okta/ + aws/) with dev backend for environment parity
+      - name: Apply Okta config (dev)
+        working-directory: ./okta
+        run: |
+          terraform init -input=false -backend-config=backend-dev.conf -backend-config="region=us-east-1"
+          terraform apply -input=false -auto-approve \
+            -var "okta_org_name=$OKTA_ORG_NAME" \
+            -var "okta_api_token=$OKTA_API_TOKEN"
+
+      - name: Apply AWS infra (dev)
+        working-directory: ./aws
+        run: |
+          terraform init -input=false -backend-config=backend-dev.conf -backend-config="region=us-east-1"
+          terraform apply -input=false -auto-approve \
+            -var "aws_region=$AWS_REGION"
