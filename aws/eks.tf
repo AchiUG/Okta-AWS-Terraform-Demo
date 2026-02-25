@@ -9,6 +9,18 @@ module "eks" {
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
+
+  eks_managed_node_groups = {
+    default = {
+      instance_types = ["t3.medium"]
+      min_size       = 1
+      max_size       = 2
+      desired_size   = 1
+      capacity_type  = "ON_DEMAND"
+      subnet_ids     = module.vpc.private_subnets
+    }
+  }
+
   access_entries = {
     achi_admin = {
       principal_arn = "arn:aws:iam::363341493372:user/Achi"

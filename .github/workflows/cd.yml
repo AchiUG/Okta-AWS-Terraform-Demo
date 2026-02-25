@@ -50,6 +50,24 @@ jobs:
         run: |
           aws eks update-kubeconfig --name cicd-eks --region $AWS_REGION
 
+      - name: Preflight cluster diagnostics
+        run: |
+          kubectl version
+          kubectl get nodes -o wide || true
+          kubectl get ns
+          kubectl get events -A --sort-by='.lastTimestamp' || true
+
+      - name: Wait for ready worker nodes
+        run: |
+          NODE_COUNT=$(kubectl get nodes --no-headers 2>/dev/null | wc -l | tr -d ' ')
+          if [ "$NODE_COUNT" = "0" ]; then
+            echo "No worker nodes found in cluster. Kubernetes workloads cannot be scheduled."
+            kubectl get events -A --sort-by='.lastTimestamp' || true
+            exit 1
+          fi
+          kubectl wait --for=condition=Ready nodes --all --timeout=10m
+          kubectl get nodes -o wide
+
       - name: Deploy to EKS
         run: |
           kubectl apply -f k8s/namespace.yaml
@@ -66,6 +84,9 @@ jobs:
       - name: Show pod status (on rollout failure)
         if: failure()
         run: |
+          kubectl get deployment demo-app -n demo -o wide || true
+          kubectl get rs -n demo -o wide || true
           kubectl get pods -n demo -o wide
           kubectl describe deployment demo-app -n demo
+          kubectl describe pods -n demo
           kubectl get events -n demo --sort-by='.lastTimestamp'
