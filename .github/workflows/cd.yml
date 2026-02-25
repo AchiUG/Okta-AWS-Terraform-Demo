@@ -56,6 +56,9 @@ jobs:
           kubectl apply -f k8s/deployment.yaml
           kubectl apply -f k8s/service.yaml
 
+      - name: Restart deployment (force fresh rollout)
+        run: kubectl rollout restart deployment/demo-app -n demo
+
       - name: Wait for rollout
         run: |
           kubectl rollout status deployment/demo-app -n demo --timeout=8m
